@@ -13,8 +13,9 @@ An Android Wear &amp; Handheld App help you **find** your android devices.
   
   * Where is my watch agian?!!!!!! :sob:
 
-FindAndroid will help you!!!:octocat:
 
-Pull Requests are highly appereaciated !!! 
+##FindAndroid will help you!!!:octocat:##
+
+###Pull Requests are highly appereaciated !!! ###
 
 [Blog about this project - John Feng's Blog](http://johnfeng.github.io/)
