@@ -17,6 +17,6 @@ An Android Wear &amp; Handheld App help you **find** your android devices.
 
 ###FindAndroid will help you out!!!:octocat::smile:###
 
-###Pull Requests are highly appereaciated !!! ###
+###Pull Requests are highly appreciated !!! ###
 
 [Blog about this project - John Feng's Blog](http://johnfeng.github.io/)
