@@ -1,8 +1,10 @@
 package me.johnfeng.findandroid;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +16,8 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.NotificationCompat.WearableExtender;
 
 import com.dd.CircularProgressButton;
+
+import utils.Constants;
 
 public class MobileMainActivity extends Activity implements Handler.Callback {
 
@@ -47,7 +51,7 @@ public class MobileMainActivity extends Activity implements Handler.Callback {
         } else {
             isProgressing = true;
             setFindButtonState(50);
-
+            sendNotification();
             Message message = new Message();
             message.what = 100;
             mHandler.sendMessageDelayed(message, FIND_TIME);
@@ -73,30 +77,38 @@ public class MobileMainActivity extends Activity implements Handler.Callback {
         findButton.setProgress(state);
     }
 
-    void buildNotification() {
-
+    void sendNotification() {
         int notificationId = 001;
-// Build intent for notification content
-        Intent viewIntent = new Intent(this, MobileMainActivity.class);
-        viewIntent.putExtra(EXTRA_EVENT_ID, eventId);
-        PendingIntent viewPendingIntent =
-                PendingIntent.getActivity(this, 0, viewIntent, 0);
 
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable)
-                        .setContentTitle(eventTitle)
-                        .setContentText(eventLocation)
-                        .setContentIntent(viewPendingIntent);
+        // Create an intent for the reply action
+        Intent actionIntent = new Intent(this, MobileMainActivity.class);
+        PendingIntent actionPendingIntent =
+                PendingIntent.getActivity(this, 0, actionIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
-// Get an instance of the NotificationManager service
+        // Create the action
+        NotificationCompat.Action action =
+                new NotificationCompat.Action.Builder(R.mipmap.ic_logo,
+                        getString(R.string.Found), actionPendingIntent)
+                        .build();
+
+        // Build the notification and add the action via WearableExtender
+        Notification notification =
+                new NotificationCompat.Builder(MobileMainActivity.this)
+                        .setSmallIcon(R.mipmap.ic_logo)
+                        .setContentText(getString(R.string.app_name))
+                        .extend(new WearableExtender().addAction(action))
+                        .setVibrate(new long[]{1000, 500, 1000, 500, 1000, 500, 1000, 500})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+                        .build();
+
+        // Get an instance of the NotificationManager service
         NotificationManagerCompat notificationManager =
-                NotificationManagerCompat.from(this);
+                NotificationManagerCompat.from(MobileMainActivity.this);
 
-// Build the notification and issues it with notification manager.
-        notificationManager.notify(notificationId, notificationBuilder.build());
+        // Issue the notification with notification manager.
+        notificationManager.notify(notificationId, notification);
     }
-
 
     @Override
     public boolean handleMessage(final Message msg) {
