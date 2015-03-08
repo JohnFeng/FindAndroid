@@ -1,39 +1,127 @@
 package me.johnfeng.findandroid;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.Toast;
 
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.NotificationCompat.WearableExtender;
 
-public class MobileMainActivity extends Activity {
+import com.dd.CircularProgressButton;
+
+import utils.Constants;
+
+public class MobileMainActivity extends Activity implements Handler.Callback {
+
+    private Handler mHandler;
+    private static final int FIND_TIME = 5000;
+    CircularProgressButton findButton;
+    boolean isProgressing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mobile_act_main);
+        mHandler = new Handler(this);
+
+        findButton = (CircularProgressButton) findViewById(R.id.findButton);
+        findButton.setIndeterminateProgressMode(true); // turn on indeterminate progress
+        findButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFindAndroid();
+            }
+        });
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    void startFindAndroid() {
+        if (isProgressing) {
+            Toast.makeText(this, "Please Wait a Sec...", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        } else {
+            isProgressing = true;
+            setFindButtonState(50);
+            sendNotification();
+            Message message = new Message();
+            message.what = 100;
+            mHandler.sendMessageDelayed(message, FIND_TIME);
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    /**
+     * @param state normal state [0]
+     *              progress state [1-99]
+     *              success state [100]
+     *              error state [-1]
+     */
+    void setFindButtonState(int state) {
+        if (findButton == null) {
+            return;
         }
 
-        return super.onOptionsItemSelected(item);
+        if (state < -1 || state > 100) {
+            return;
+        }
+
+        findButton.setProgress(state);
+    }
+
+    void sendNotification() {
+        int notificationId = 001;
+
+        // Create an intent for the reply action
+        Intent actionIntent = new Intent(this, MobileMainActivity.class);
+        PendingIntent actionPendingIntent =
+                PendingIntent.getActivity(this, 0, actionIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Create the action
+        NotificationCompat.Action action =
+                new NotificationCompat.Action.Builder(R.mipmap.ic_logo,
+                        getString(R.string.Found), actionPendingIntent)
+                        .build();
+
+        // Build the notification and add the action via WearableExtender
+        Notification notification =
+                new NotificationCompat.Builder(MobileMainActivity.this)
+                        .setSmallIcon(R.mipmap.ic_logo)
+                        .setContentText(getString(R.string.app_name))
+                        .extend(new WearableExtender().addAction(action))
+                        .setVibrate(new long[]{1000, 500, 1000, 500, 1000, 500, 1000, 500})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+                        .build();
+
+        // Get an instance of the NotificationManager service
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(MobileMainActivity.this);
+
+        // Issue the notification with notification manager.
+        notificationManager.notify(notificationId, notification);
+    }
+
+    @Override
+    public boolean handleMessage(final Message msg) {
+        if (msg.what == 0) {
+            setFindButtonState(0);
+            isProgressing = false;
+        } else {
+            // 100 && -1
+            setFindButtonState(msg.what);
+            Message message = new Message();
+            message.what = 0;
+            mHandler.sendMessageDelayed(message, 1500);
+        }
+        return true;
     }
 }
