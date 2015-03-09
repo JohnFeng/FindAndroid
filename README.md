@@ -19,8 +19,8 @@ An Android Wear &amp; Handheld App help you **find** your android devices.
 
 ###Pull Requests are highly appreciated !!! ###
 
-###Function:
+###Functions:
 
-Show Notifications with Vibrate and Sound on Wearable or Handhelds to help you find it!
+Show Notifications with Vibrate and Sounds on Wearable devices or Handhelds to help you find it!
 
 [Blog about this project - John Feng's Blog](http://johnfeng.github.io/)
