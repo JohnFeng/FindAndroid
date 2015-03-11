@@ -3,14 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity"
     tools:deviceIds="wear_round">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_round" />
+    <com.dd.CircularProgressButton
+        android:id="@+id/findButton"
+        android:layout_width="196dp"
+        android:layout_height="64dp"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:cpb_textComplete="@string/Complete"
+        app:cpb_textError="@string/Error"
+        app:cpb_textIdle="@string/Find"
+        app:cpb_selectorIdle="@drawable/idle_state_selector"
+        app:cpb_cornerRadius="48dp"
+        />
 </RelativeLayout>
