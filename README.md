@@ -23,4 +23,11 @@ An Android Wear &amp; Handheld App help you **find** your android devices.
 
 Show Notifications with Vibrate and Sounds on Wearable devices or Handhelds to help you find it!
 
+###3rd Party Libs:
+
+* [EventBus for Android Wear devices](https://github.com/tajchert/BusWear)
+
+
+###Blog:
+
 [Blog about this project - John Feng's Blog](http://johnfeng.github.io/)
